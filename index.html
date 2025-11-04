@@ -1010,14 +1010,33 @@
             
             <div class="robot-visual">
                 <div class="video-container">
-                    <video id="studybot-video" autoplay muted loop playsinline controls>
-                        <source src="./vid.mp4" type="video/mp4">
-                        <source src="vid.mp4" type="video/mp4">
-                        <source src="/studybud/vid.mp4" type="video/mp4">
-                        <source src="https://github.com/Namkha-yolo/studybud/raw/main/vid.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
+                    <!-- Option 1: Try using an iframe if you upload to YouTube/Vimeo -->
+                    <!-- <iframe src="YOUR_VIDEO_URL" frameborder="0" allowfullscreen></iframe> -->
+                    
+                    <!-- Option 2: Use a GIF instead -->
+                    <!-- <img src="studybot-demo.gif" alt="StudyBot Demo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;"> -->
+                    
+                    <!-- Option 3: Animated CSS Robot (currently active) -->
+                    <div class="robot-3d" style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e3c72, #2a5298); border-radius: 20px; position: relative; display: flex; align-items: center; justify-content: center;">
+                        <div class="robot-face" style="position: relative;">
+                            <div class="robot-eyes" style="display: flex; gap: 60px; margin-bottom: 30px;">
+                                <div class="robot-eye" style="width: 50px; height: 50px; background: #00d4ff; border-radius: 50%; box-shadow: 0 0 30px #00d4ff; animation: blink 4s infinite;"></div>
+                                <div class="robot-eye" style="width: 50px; height: 50px; background: #00d4ff; border-radius: 50%; box-shadow: 0 0 30px #00d4ff; animation: blink 4s infinite;"></div>
+                            </div>
+                            <div class="robot-mouth" style="width: 80px; height: 15px; background: #00d4ff; border-radius: 0 0 40px 40px; box-shadow: 0 0 20px #00d4ff; margin: 0 auto; animation: speak 2s infinite;"></div>
+                        </div>
+                        <div class="demo-text" style="position: absolute; bottom: 30px; text-align: center; color: white;">
+                            <h3 style="font-size: 1.2em; margin-bottom: 5px;">StudyBot AI</h3>
+                            <p style="opacity: 0.8; font-size: 0.9em;">Click to see demo</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Video attempt with GitHub raw URL - uncomment to try -->
+                    <!-- 
+                    <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+                        <source src="https://raw.githubusercontent.com/Namkha-yolo/studybud/main/vid.mp4" type="video/mp4">
                     </video>
-                    <div class="video-overlay"></div>
+                    -->
                 </div>
             </div>
         </div>
@@ -1292,63 +1311,71 @@
     </footer>
     
     <script>
-        // Handle video loading with better debugging
-        const video = document.getElementById('studybot-video');
-        if (video) {
-            // Remove controls after testing
-            setTimeout(() => {
-                video.controls = false;
-            }, 5000);
-            
-            video.addEventListener('loadeddata', function() {
-                console.log('Video loaded successfully');
-                video.play().catch(e => console.log('Autoplay prevented:', e));
-            });
-            
-            video.addEventListener('error', function(e) {
-                console.error('Video failed to load:', e);
-                // If all video sources fail, show a nice fallback
-                const videoContainer = document.querySelector('.video-container');
-                if (videoContainer) {
-                    videoContainer.innerHTML = `
-                        <div class="robot-3d-fallback" style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e3c72, #2a5298); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
-                            <div class="fallback-content" style="text-align: center; color: white;">
-                                <div style="font-size: 5em; margin-bottom: 20px;">🤖</div>
-                                <h3 style="font-size: 1.5em; margin-bottom: 10px;">StudyBot Demo</h3>
-                                <p style="opacity: 0.8;">AI-Powered Learning Companion</p>
-                            </div>
+        // Add click handler for video demo
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoContainer = document.querySelector('.video-container');
+            if (videoContainer) {
+                videoContainer.style.cursor = 'pointer';
+                videoContainer.addEventListener('click', function() {
+                    // Try to open video in a modal
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.9);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                    `;
+                    
+                    modal.innerHTML = `
+                        <div style="position: relative; width: 80%; max-width: 800px;">
+                            <button style="position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 2em; cursor: pointer;">✕</button>
+                            <video controls autoplay style="width: 100%; border-radius: 10px;">
+                                <source src="https://raw.githubusercontent.com/Namkha-yolo/studybud/main/vid.mp4" type="video/mp4">
+                                <source src="vid.mp4" type="video/mp4">
+                                <p>Your browser doesn't support HTML5 video. <a href="https://github.com/Namkha-yolo/studybud/blob/main/vid.mp4">Download the video</a>.</p>
+                            </video>
                         </div>
                     `;
-                }
-            });
-            
-            // Try alternative loading method if video doesn't start
-            setTimeout(() => {
-                if (video.paused) {
-                    video.play().catch(e => {
-                        console.log('Delayed autoplay attempt failed:', e);
+                    
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal || e.target.tagName === 'BUTTON') {
+                            document.body.removeChild(modal);
+                        }
                     });
-                }
-            }, 1000);
-        }
+                    
+                    document.body.appendChild(modal);
+                });
+            }
+        });
         
         // Create floating particles
         const particlesContainer = document.querySelector('.particles');
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 10 + 's';
-            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-            particlesContainer.appendChild(particle);
+        if (particlesContainer) {
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
         }
         
         // Form handling
-        document.querySelector('.waitlist-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for joining! We\'ll notify you when StudyBot launches.');
-            this.reset();
-        });
+        const form = document.querySelector('.waitlist-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for joining! We\'ll notify you when StudyBot launches.');
+                this.reset();
+            });
+        }
         
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
