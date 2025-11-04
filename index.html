@@ -1010,8 +1010,11 @@
             
             <div class="robot-visual">
                 <div class="video-container">
-                    <video autoplay muted loop playsinline>
+                    <video id="studybot-video" autoplay muted loop playsinline controls>
+                        <source src="./vid.mp4" type="video/mp4">
                         <source src="vid.mp4" type="video/mp4">
+                        <source src="/studybud/vid.mp4" type="video/mp4">
+                        <source src="https://github.com/Namkha-yolo/studybud/raw/main/vid.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                     <div class="video-overlay"></div>
@@ -1289,28 +1292,44 @@
     </footer>
     
     <script>
-        // Handle video loading
-        const video = document.querySelector('.video-container video');
+        // Handle video loading with better debugging
+        const video = document.getElementById('studybot-video');
         if (video) {
-            video.addEventListener('error', function() {
-                // If video fails to load, you could show a fallback image or animation
-                console.log('Video failed to load, showing fallback');
-                // Optionally replace with static image or animated robot
+            // Remove controls after testing
+            setTimeout(() => {
+                video.controls = false;
+            }, 5000);
+            
+            video.addEventListener('loadeddata', function() {
+                console.log('Video loaded successfully');
+                video.play().catch(e => console.log('Autoplay prevented:', e));
+            });
+            
+            video.addEventListener('error', function(e) {
+                console.error('Video failed to load:', e);
+                // If all video sources fail, show a nice fallback
                 const videoContainer = document.querySelector('.video-container');
                 if (videoContainer) {
                     videoContainer.innerHTML = `
-                        <div class="robot-3d-fallback">
-                            <div class="robot-face">
-                                <div class="robot-eyes">
-                                    <div class="robot-eye"></div>
-                                    <div class="robot-eye"></div>
-                                </div>
-                                <div class="robot-mouth"></div>
+                        <div class="robot-3d-fallback" style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e3c72, #2a5298); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                            <div class="fallback-content" style="text-align: center; color: white;">
+                                <div style="font-size: 5em; margin-bottom: 20px;">🤖</div>
+                                <h3 style="font-size: 1.5em; margin-bottom: 10px;">StudyBot Demo</h3>
+                                <p style="opacity: 0.8;">AI-Powered Learning Companion</p>
                             </div>
                         </div>
                     `;
                 }
             });
+            
+            // Try alternative loading method if video doesn't start
+            setTimeout(() => {
+                if (video.paused) {
+                    video.play().catch(e => {
+                        console.log('Delayed autoplay attempt failed:', e);
+                    });
+                }
+            }, 1000);
         }
         
         // Create floating particles
